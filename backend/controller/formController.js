@@ -1,19 +1,20 @@
 import { db } from '../config/connectDB.js';
+import { FORM_MESSAGES } from '../constants/formMessages.js';
 
 const formData = (req, res) => {
     const { name, age, mobileNumber, email, companyName, jobTitle, address, benefit_company, benefit_industry } = req.body;
 
     // ✅ Validation
     if (!name) {
-        return res.status(400).json({ message: "Name is required" });
+        return res.status(400).json({ message: FORM_MESSAGES.NAME_REQUIRED });
     }
 
     if (!mobileNumber) {
-        return res.status(400).json({ message: "Mobile Number is required" });
+        return res.status(400).json({ message: FORM_MESSAGES.MOBILE_REQUIRED });
     }
 
     if (!email) {
-        return res.status(400).json({ message: "Email is required" });
+        return res.status(400).json({ message: FORM_MESSAGES.EMAIL_REQUIRED });
     }
 
     const sql = `
@@ -28,15 +29,15 @@ const formData = (req, res) => {
             if (err.code === "ER_DUP_ENTRY") {
                 // ✅ Duplicate mobile number
                 return res.status(400).json({
-                    message: "User with this Mobile Number already exists"
+                    message: FORM_MESSAGES.DUPLICATE_MOBILE
                 });
             }
             console.error("Error inserting data:", err);
-            return res.status(500).json({ error: "Database error" });
+            return res.status(500).json({ error: FORM_MESSAGES.DB_ERROR });
         }
 
         res.status(200).json({
-            message: "Form data inserted successfully",
+            message: FORM_MESSAGES.INSERT_SUCCESS,
             insertedId: result.insertId
         });
     });
